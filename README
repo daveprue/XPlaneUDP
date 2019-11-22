@@ -1,0 +1,29 @@
+Here is some sample Arduino code that registers over UDP with X-Plane (10 or 11) 
+and receives the datarefs back at the requested frequency.  Note that this is 
+written specifically for the ESP8266 variant (WeMOS D1 and D1 Mini), and would 
+need to be reworked to run on a Arduino Mega (or other variant) with an ethernet 
+shield. (I would have ported it already, but I don't have an ethernet shield handy).
+
+The real beauty of this approach is that it requires no plugins or any other "middleware".
+
+If you have any questions about the code, just ask.  I would be happy to explain any part.
+
+
+Notice two things that can be gotchas:
+
+1.  In subscribe()  it seems that X-Plane will only honor your request if you pass a "complete" 
+request packet, i.e. 400 bytes of request area, and it must also be initialized to spaces (0x20) 
+in all the unused parts.  If X-Plane is not happy with your request, it simply IGNORES it, it does 
+not reply with any error message.
+
+2.  Alignment can be an issue.  Obviously, for speed you want to load a complete int or float 
+instead of doing four byte loads from the buffer, but to do this, the fields in the received buffer 
+need to be on a four-byte aligned boundary.  This means that you have to offset the udp read to 
+make everything line up.
+
+Anyway, just some observations.  I have this code running cleanly on a D1 over Wifi.  It finds X-Plane,
+subscribes, and receives data refs.
+
+Dave
+
+ 
